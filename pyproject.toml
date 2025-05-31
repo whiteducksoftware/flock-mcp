@@ -1,9 +1,9 @@
 [project]
 name = "flock-mcp"
-version = "0.1.0"
-description = "Add your description here"
+version = "0.1.1"
+description = "Flock MCP Servers and Tools"
 readme = "README.md"
-requires-python = ">=3.13"
+requires-python = ">=3.10,<3.13"
 dependencies = [
 ]
 
