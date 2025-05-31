@@ -68,3 +68,8 @@ uv add flock-mcp
 ## Usage
 
 After installation, you can use the various MCP servers and tools provided by this package with the Flock agent framework.
+
+```python
+# eg
+from flock.tools.file_tools import file....
+```
