@@ -1,2 +1,2 @@
 # flock-mcp
-Flock MCP Servers and Tools
+Multiple MCP servers and tools for the agent framework Flock.
