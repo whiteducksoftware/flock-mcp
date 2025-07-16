@@ -1,5 +1,6 @@
 import os
 from typing import Any
+from flock.core.registry.decorators import flock_tool
 
 from azure.core.credentials import AzureKeyCredential
 from azure.search.documents import SearchClient
@@ -53,6 +54,7 @@ def _get_default_index_name() -> str:
 
 
 @traced_and_logged
+@flock_tool
 def azure_search_initialize_clients(
     endpoint: str | None = None,
     api_key: str | None = None,
@@ -98,6 +100,7 @@ def azure_search_initialize_clients(
 
 
 @traced_and_logged
+@flock_tool
 def azure_search_create_index(
     index_name: str | None = None,
     fields: list[SearchField] = None,
@@ -143,6 +146,7 @@ def azure_search_create_index(
 
 
 @traced_and_logged
+@flock_tool
 def azure_search_upload_documents(
     documents: list[dict[str, Any]],
     index_name: str | None = None,
@@ -181,6 +185,7 @@ def azure_search_upload_documents(
 
 
 @traced_and_logged
+@flock_tool
 def azure_search_query(
     search_text: str | None = None,
     filter: str | None = None,
@@ -242,6 +247,7 @@ def azure_search_query(
 
 
 @traced_and_logged
+@flock_tool
 def azure_search_get_document(
     key: str,
     select: list[str] | None = None,
@@ -318,6 +324,7 @@ def azure_search_delete_documents(
 
 
 @traced_and_logged
+@flock_tool
 def azure_search_list_indexes(
     endpoint: str | None = None, api_key: str | None = None
 ) -> list[dict[str, Any]]:
@@ -512,6 +519,7 @@ def _get_blob_service_client(conn_string_env_var: str) -> BlobServiceClient:
 
 
 @traced_and_logged
+@flock_tool
 def azure_storage_list_containers(conn_string_env_var: str) -> list[str]:
     """Lists all containers in the Azure Storage account.
 
@@ -527,6 +535,7 @@ def azure_storage_list_containers(conn_string_env_var: str) -> list[str]:
 
 
 @traced_and_logged
+@flock_tool
 def azure_storage_create_container(container_name: str, conn_string_env_var: str) -> dict[str, Any]:
     """Creates a new container in the Azure Storage account.
 
@@ -546,6 +555,7 @@ def azure_storage_create_container(container_name: str, conn_string_env_var: str
 
 
 @traced_and_logged
+@flock_tool
 def azure_storage_delete_container(container_name: str, conn_string_env_var: str) -> dict[str, Any]:
     """Deletes an existing container from the Azure Storage account.
 
@@ -565,6 +575,7 @@ def azure_storage_delete_container(container_name: str, conn_string_env_var: str
 
 
 @traced_and_logged
+@flock_tool
 def azure_storage_list_blobs(container_name: str, conn_string_env_var: str) -> list[str]:
     """Lists all blobs in a specified container.
 
@@ -582,6 +593,7 @@ def azure_storage_list_blobs(container_name: str, conn_string_env_var: str) -> l
 
 
 @traced_and_logged
+@flock_tool
 def azure_storage_upload_blob_text(container_name: str, blob_name: str, text_content: str, conn_string_env_var: str, overwrite: bool = True) -> dict[str, Any]:
     """Uploads text content as a blob to the specified container.
 
@@ -606,6 +618,7 @@ def azure_storage_upload_blob_text(container_name: str, blob_name: str, text_con
 
 
 @traced_and_logged
+@flock_tool
 def azure_storage_upload_blob_bytes(container_name: str, blob_name: str, bytes_content: bytes, conn_string_env_var: str, overwrite: bool = True) -> dict[str, Any]:
     """Uploads bytes content as a blob to the specified container.
 
@@ -630,6 +643,7 @@ def azure_storage_upload_blob_bytes(container_name: str, blob_name: str, bytes_c
 
 
 @traced_and_logged
+@flock_tool
 def azure_storage_upload_blob_from_file(container_name: str, blob_name: str, file_path: str, conn_string_env_var: str, overwrite: bool = True) -> dict[str, Any]:
     """Uploads a local file to a blob in the specified container.
 
@@ -656,6 +670,7 @@ def azure_storage_upload_blob_from_file(container_name: str, blob_name: str, fil
 
 
 @traced_and_logged
+@flock_tool
 def azure_storage_download_blob_to_text(container_name: str, blob_name: str, conn_string_env_var: str) -> str:
     """Downloads a blob's content as text.
 
@@ -680,6 +695,7 @@ def azure_storage_download_blob_to_text(container_name: str, blob_name: str, con
 
 
 @traced_and_logged
+@flock_tool
 def azure_storage_download_blob_to_bytes(container_name: str, blob_name: str, conn_string_env_var: str) -> bytes:
     """Downloads a blob's content as bytes.
 
@@ -698,6 +714,7 @@ def azure_storage_download_blob_to_bytes(container_name: str, blob_name: str, co
 
 
 @traced_and_logged
+@flock_tool
 def azure_storage_download_blob_to_file(container_name: str, blob_name: str, file_path: str, conn_string_env_var: str, overwrite: bool = True) -> dict[str, Any]:
     """Downloads a blob to a local file.
 
@@ -726,6 +743,7 @@ def azure_storage_download_blob_to_file(container_name: str, blob_name: str, fil
 
 
 @traced_and_logged
+@flock_tool
 def azure_storage_delete_blob(container_name: str, blob_name: str, conn_string_env_var: str) -> dict[str, Any]:
     """Deletes a specified blob from a container.
 
@@ -747,6 +765,7 @@ def azure_storage_delete_blob(container_name: str, blob_name: str, conn_string_e
 
 
 @traced_and_logged
+@flock_tool
 def azure_storage_get_blob_properties(container_name: str, blob_name: str, conn_string_env_var: str) -> dict[str, Any]:
     """Retrieves properties of a specified blob.
 

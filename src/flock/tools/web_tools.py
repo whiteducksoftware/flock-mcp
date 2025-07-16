@@ -4,9 +4,11 @@ import os
 from typing import Literal
 
 from flock.core.logging.trace_and_logged import traced_and_logged
+from flock.core.registry.decorators import flock_tool
 
 
 @traced_and_logged
+@flock_tool
 def web_search_tavily(query: str):
     if importlib.util.find_spec("tavily") is not None:
         from tavily import TavilyClient
@@ -24,6 +26,7 @@ def web_search_tavily(query: str):
 
 
 @traced_and_logged
+@flock_tool
 def web_search_duckduckgo(
     keywords: str, search_type: Literal["news", "web"] = "web"
 ):
@@ -46,6 +49,7 @@ def web_search_duckduckgo(
 
 
 @traced_and_logged
+@flock_tool
 def web_search_bing(keywords: str):
     try:
         import httpx
@@ -69,6 +73,7 @@ def web_search_bing(keywords: str):
         raise
 
 @traced_and_logged
+@flock_tool
 def web_content_as_markdown(url: str) -> str:
     if (
         importlib.util.find_spec("httpx") is not None

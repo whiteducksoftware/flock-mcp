@@ -3,9 +3,11 @@ import json
 from typing import Any
 
 from flock.core.logging.trace_and_logged import traced_and_logged
+from flock.core.registry.decorators import flock_tool
 
 
 @traced_and_logged
+@flock_tool
 def file_get_anything_as_markdown(url_or_file_path: str):
     if importlib.util.find_spec("docling") is not None:
         from docling.document_converter import DocumentConverter
@@ -24,6 +26,7 @@ def file_get_anything_as_markdown(url_or_file_path: str):
 
 
 @traced_and_logged
+@flock_tool
 def file_append_to_file(content: str, filename: str):
     try:
         with open(filename, "a", encoding="utf-8") as f:
@@ -33,6 +36,7 @@ def file_append_to_file(content: str, filename: str):
 
 
 @traced_and_logged
+@flock_tool
 def file_save_to_file(content: str, filename: str):
     try:
         with open(filename, "w", encoding="utf-8") as f:
@@ -42,12 +46,14 @@ def file_save_to_file(content: str, filename: str):
 
 
 @traced_and_logged
+@flock_tool
 def file_read_from_file(filename: str) -> str:
     with open(filename, encoding="utf-8") as file:
         return file.read()
 
 
 @traced_and_logged
+@flock_tool
 def file_json_parse_safe(text: str) -> dict:
     try:
         result = json.loads(text)
@@ -57,6 +63,7 @@ def file_json_parse_safe(text: str) -> dict:
 
 
 @traced_and_logged
+@flock_tool
 def file_json_search(
     json_file_path: str, search_query: str, case_sensitive: bool = False
 ) -> list:

@@ -7,6 +7,7 @@ from typing import Any
 import nltk
 
 from flock.core.logging.trace_and_logged import traced_and_logged
+from flock.core.registry.decorators import flock_tool
 
 # Ensure NLTK data is downloaded
 try:
@@ -21,11 +22,13 @@ except LookupError:
 
 
 @traced_and_logged
+@flock_tool
 def text_split_by_sentences(text: str) -> list[str]:
     return nltk.sent_tokenize(text)
 
 
 @traced_and_logged
+@flock_tool
 def text_split_by_characters(
     text: str, chunk_size: int = 4000, overlap: int = 200
 ) -> list[str]:
@@ -71,6 +74,7 @@ def text_split_by_characters(
 
 
 @traced_and_logged
+@flock_tool
 def text_split_by_tokens(
     text: str,
     tokenizer: Callable[[str], list[str]],
@@ -90,6 +94,7 @@ def text_split_by_tokens(
 
 
 @traced_and_logged
+@flock_tool
 def text_split_by_separator(text: str, separator: str = "\n\n") -> list[str]:
     if not text:
         return []
@@ -99,6 +104,7 @@ def text_split_by_separator(text: str, separator: str = "\n\n") -> list[str]:
 
 
 @traced_and_logged
+@flock_tool
 def text_recursive_splitter(
     text: str,
     chunk_size: int = 4000,
@@ -169,6 +175,7 @@ def text_recursive_splitter(
 
 
 @traced_and_logged
+@flock_tool
 def text_chunking_for_embedding(
     text: str, file_name: str, chunk_size: int = 1000, overlap: int = 100
 ) -> list[dict[str, Any]]:
@@ -190,6 +197,7 @@ def text_chunking_for_embedding(
 
 
 @traced_and_logged
+@flock_tool
 def text_split_code_by_functions(code: str) -> list[dict[str, Any]]:
     if not code:
         return []
@@ -237,6 +245,7 @@ def text_split_code_by_functions(code: str) -> list[dict[str, Any]]:
 
 
 @traced_and_logged
+@flock_tool
 def text_count_tokens(text: str, model: str = "gpt-3.5-turbo") -> int:
     """Count tokens using tiktoken."""
     if not text:
@@ -275,6 +284,7 @@ def text_count_tokens(text: str, model: str = "gpt-3.5-turbo") -> int:
 
 
 @traced_and_logged
+@flock_tool
 def text_count_tokens_estimate(text: str, model: str = "gpt-3.5-turbo") -> int:
     """Estimate token count for different models."""
     if not text:
@@ -296,6 +306,7 @@ def text_count_tokens_estimate(text: str, model: str = "gpt-3.5-turbo") -> int:
 
 
 @traced_and_logged
+@flock_tool
 def text_truncate_to_token_limit(
     text: str, max_tokens: int = 4000, model: str = "gpt-3.5-turbo"
 ) -> str:
@@ -352,6 +363,7 @@ def text_truncate_to_token_limit(
 
 
 @traced_and_logged
+@flock_tool
 def text_extract_keywords(text: str, top_n: int = 10) -> list[str]:
     if not text:
         return []
@@ -488,6 +500,7 @@ def text_extract_keywords(text: str, top_n: int = 10) -> list[str]:
 
 
 @traced_and_logged
+@flock_tool
 def text_clean_text(
     text: str,
     remove_urls: bool = True,
@@ -517,6 +530,7 @@ def text_clean_text(
 
 
 @traced_and_logged
+@flock_tool
 def text_format_chat_history(
     messages: list[dict[str, str]],
     format_type: str = "text",
@@ -566,6 +580,7 @@ def text_format_chat_history(
 
 
 @traced_and_logged
+@flock_tool
 def text_extract_json_from_text(text: str) -> dict[str, Any] | None:
     if not text:
         return None
@@ -598,6 +613,7 @@ def text_extract_json_from_text(text: str) -> dict[str, Any] | None:
 
 
 @traced_and_logged
+@flock_tool
 def text_calculate_hash(text: str, algorithm: str = "sha256") -> str:
     if not text:
         return ""
@@ -613,6 +629,7 @@ def text_calculate_hash(text: str, algorithm: str = "sha256") -> str:
 
 
 @traced_and_logged
+@flock_tool
 def text_format_table_from_dicts(data: list[dict[str, Any]]) -> str:
     if not data:
         return ""
@@ -648,6 +665,7 @@ def text_format_table_from_dicts(data: list[dict[str, Any]]) -> str:
 
 
 @traced_and_logged
+@flock_tool
 def text_detect_language(text: str) -> str:
     """Simple language detection"""
     if not text or len(text.strip()) < 10:
@@ -733,6 +751,7 @@ def text_detect_language(text: str) -> str:
 
 
 @traced_and_logged
+@flock_tool
 def text_tiktoken_split(
     text: str,
     model: str = "gpt-3.5-turbo",
@@ -788,6 +807,7 @@ def text_tiktoken_split(
 
 
 @traced_and_logged
+@flock_tool
 def text_count_words(text: str) -> int:
     if not text:
         return 0
@@ -795,6 +815,7 @@ def text_count_words(text: str) -> int:
 
 
 @traced_and_logged
+@flock_tool
 def text_extract_urls(text: str) -> list[str]:
     if not text:
         return []
@@ -803,6 +824,7 @@ def text_extract_urls(text: str) -> list[str]:
 
 
 @traced_and_logged
+@flock_tool
 def text_extract_numbers(text: str) -> list[float]:
     if not text:
         return []

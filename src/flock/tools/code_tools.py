@@ -1,8 +1,9 @@
 from flock.core.interpreter.python_interpreter import PythonInterpreter
 from flock.core.logging.trace_and_logged import traced_and_logged
-
+from flock.core.registry.decorators import flock_tool
 
 @traced_and_logged
+@flock_tool
 def code_evaluate_math(expression: str) -> float:
     try:
         result = PythonInterpreter(
@@ -30,6 +31,7 @@ def code_evaluate_math(expression: str) -> float:
 
 
 @traced_and_logged
+@flock_tool
 def code_code_eval(python_code: str) -> str:
     """A Python code evaluation tool that executes Python code and returns the result.
     
@@ -84,6 +86,7 @@ def code_code_eval(python_code: str) -> str:
 
 
 @traced_and_logged
+@flock_tool
 def docker_code_execute(python_code: str) -> str:
     """Execute Python code in a sandboxed Docker container."""
     import ast
