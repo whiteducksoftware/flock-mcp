@@ -21,7 +21,7 @@ def web_search_tavily(query: str):
             raise
     else:
         raise ImportError(
-            "Optional tool dependencies not installed. Install with 'pip install flock-core[tools]'."
+            "Optional tool dependencies not installed. Install with 'pip install flock-mcp[all]'."
         )
 
 
@@ -31,8 +31,8 @@ def web_search_duckduckgo(
     keywords: str, search_type: Literal["news", "web"] = "web"
 ):
     try:
-        if importlib.util.find_spec("duckduckgo_search") is not None:
-            from duckduckgo_search import DDGS
+        if importlib.util.find_spec("ddgs") is not None:
+            from ddgs import DDGS
 
             if search_type == "news":
                 response = DDGS().news(keywords)
@@ -42,7 +42,7 @@ def web_search_duckduckgo(
                 return response
         else:
             raise ImportError(
-                "Optional tool dependencies not installed. Install with 'pip install flock-core[tools]'."
+                "Optional tool dependencies not installed. Install with 'pip install flock-mcp[all]'."
             )
     except Exception:
         raise
@@ -91,5 +91,7 @@ def web_content_as_markdown(url: str) -> str:
             raise
     else:
         raise ImportError(
-            "Optional tool dependencies not installed. Install with 'pip install flock-core[tools]'."
+            "Optional tool dependencies not installed. Install with 'pip install flock-mcp[all]'."
         )
+
+

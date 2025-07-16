@@ -843,6 +843,20 @@ wheels = [
 ]
 
 [[package]]
+name = "ddgs"
+version = "9.2.3"
+source = { registry = "https://pypi.org/simple" }
+dependencies = [
+    { name = "click" },
+    { name = "lxml" },
+    { name = "primp" },
+]
+sdist = { url = "https://files.pythonhosted.org/packages/57/e1/8154854084b24908ec782f1c2713a66b205bdcd2b20a9bc3ce274afccc24/ddgs-9.2.3.tar.gz", hash = "sha256:5ec4e0bf0a9055a991c958695b1c0194c2511d254449ab88eb874297879ed1a5", size = 26553 }
+wheels = [
+    { url = "https://files.pythonhosted.org/packages/1d/af/d42b3f4eff55cdcddf8b33631be602e40d63d7cf0cffcf15503166a46b22/ddgs-9.2.3-py3-none-any.whl", hash = "sha256:4b658edf52db3bfe80c12492077e7cc9d39312b0dbb03f8669753ac1313d3784", size = 30148 },
+]
+
+[[package]]
 name = "deprecated"
 version = "1.2.18"
 source = { registry = "https://pypi.org/simple" }
@@ -1065,20 +1079,6 @@ wheels = [
 ]
 
 [[package]]
-name = "duckduckgo-search"
-version = "8.0.2"
-source = { registry = "https://pypi.org/simple" }
-dependencies = [
-    { name = "click" },
-    { name = "lxml" },
-    { name = "primp" },
-]
-sdist = { url = "https://files.pythonhosted.org/packages/ad/c0/e18c2148d33a9d87f6a0cc00acba30b4e547be0f8cb85ccb313a6e8fbac7/duckduckgo_search-8.0.2.tar.gz", hash = "sha256:3109a99967b29cab8862823bbe320d140d5c792415de851b9d6288de2311b3ec", size = 21807 }
-wheels = [
-    { url = "https://files.pythonhosted.org/packages/bf/6c/e36d22e76f4aa4e1ea7ea9b443bd49b5ffd2f13d430840f47e35284f797a/duckduckgo_search-8.0.2-py3-none-any.whl", hash = "sha256:b5ff8b6b8f169b8e1b15a788a5749aa900ebcefd6e1ab485787582f8d5b4f1ef", size = 18184 },
-]
-
-[[package]]
 name = "durationpy"
 version = "0.10"
 source = { registry = "https://pypi.org/simple" }
@@ -1253,8 +1253,8 @@ all = [
     { name = "azure-storage-blob" },
     { name = "chromadb" },
     { name = "datasets" },
+    { name = "ddgs" },
     { name = "docling" },
-    { name = "duckduckgo-search" },
     { name = "markdownify" },
     { name = "matplotlib" },
     { name = "mem0ai", extra = ["graph"] },
@@ -1268,9 +1268,9 @@ all-tools = [
     { name = "azure-identity" },
     { name = "azure-search-documents" },
     { name = "azure-storage-blob" },
+    { name = "ddgs" },
     { name = "docker" },
     { name = "docling" },
-    { name = "duckduckgo-search" },
     { name = "markdownify" },
     { name = "nltk" },
     { name = "tavily-python" },
@@ -1281,8 +1281,8 @@ azure-tools = [
     { name = "azure-storage-blob" },
 ]
 basic-tools = [
+    { name = "ddgs" },
     { name = "docling" },
-    { name = "duckduckgo-search" },
     { name = "markdownify" },
     { name = "tavily-python" },
 ]
@@ -1324,14 +1324,14 @@ requires-dist = [
     { name = "azure-storage-blob", marker = "extra == 'azure-tools'", specifier = ">=12.25.1" },
     { name = "chromadb", marker = "extra == 'all'", specifier = ">=0.6.3" },
     { name = "datasets", marker = "extra == 'all'", specifier = ">=3.2.0" },
+    { name = "ddgs", marker = "extra == 'all'", specifier = ">=9.2.0" },
+    { name = "ddgs", marker = "extra == 'all-tools'", specifier = ">=9.2.0" },
+    { name = "ddgs", marker = "extra == 'basic-tools'", specifier = ">=9.2.0" },
     { name = "docker", marker = "extra == 'all-tools'", specifier = ">=7.1.0" },
     { name = "docker", marker = "extra == 'code-tools'", specifier = ">=7.1.0" },
     { name = "docling", marker = "extra == 'all'", specifier = ">=2.34.0" },
     { name = "docling", marker = "extra == 'all-tools'", specifier = ">=2.34.0" },
     { name = "docling", marker = "extra == 'basic-tools'", specifier = ">=2.34.0" },
-    { name = "duckduckgo-search", marker = "extra == 'all'", specifier = ">=7.3.2" },
-    { name = "duckduckgo-search", marker = "extra == 'all-tools'", specifier = ">=8.0.2" },
-    { name = "duckduckgo-search", marker = "extra == 'basic-tools'", specifier = ">=7.3.2" },
     { name = "flock-core", specifier = ">=0.5.0b9" },
     { name = "markdownify", marker = "extra == 'all'", specifier = ">=0.14.1" },
     { name = "markdownify", marker = "extra == 'all-tools'", specifier = ">=0.14.1" },
