@@ -142,6 +142,32 @@ def zendesk_search_articles(query: str) -> list[dict]:
         return response.json().get("results", [])
 
 
+@mcp.tool()
+def zendesk_add_comment_to_ticket(ticket_id: str, comment_body: str, public: bool = True) -> dict:
+    """Add a comment to a Zendesk ticket.
+
+    Updates the ticket with a new comment via Zendesk Ticketing API:
+    PUT /api/v2/tickets/{ticket_id}.json
+    """
+    ZENDESK_SUBDOMAIN = os.getenv("ZENDESK_SUBDOMAIN_TICKET")
+    BASE_URL = f"https://{ZENDESK_SUBDOMAIN}.zendesk.com"
+    url = f"{BASE_URL}/api/v2/tickets/{ticket_id}.json"
+
+    payload = {
+        "ticket": {
+            "comment": {
+                "body": comment_body,
+                "public": public,
+            }
+        }
+    }
+
+    with httpx.Client(headers=HEADERS, timeout=30.0) as client:
+        response = client.put(url, json=payload)
+        response.raise_for_status()
+        return response.json()["ticket"]
+
+
 if __name__ == "__main__":
     transport = os.getenv("ZENDESK_MCP_TRANSPORT", "stdio")
     mcp.run(transport=transport)
