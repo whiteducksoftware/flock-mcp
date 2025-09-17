@@ -1,26 +1,28 @@
 import os
-from typing import Any
+from typing import TYPE_CHECKING, Any
+
 from flock.core.registry.decorators import flock_tool
 
-from azure.core.credentials import AzureKeyCredential
-from azure.search.documents import SearchClient
-from azure.search.documents.indexes import SearchIndexClient
-from azure.search.documents.indexes.models import (
-    ExhaustiveKnnAlgorithmConfiguration,
-    HnswAlgorithmConfiguration,
-    SearchableField,
-    SearchField,
-    SearchFieldDataType,
-    SearchIndex,
-    SimpleField,
-    VectorSearch,
-    VectorSearchProfile,
-)
-from azure.search.documents.models import VectorizedQuery
-from azure.storage.blob import (
-    BlobServiceClient,
-    ContentSettings,
-)
+if TYPE_CHECKING:
+    from azure.core.credentials import AzureKeyCredential  # type: ignore
+    from azure.search.documents import SearchClient  # type: ignore
+    from azure.search.documents.indexes import SearchIndexClient  # type: ignore
+    from azure.search.documents.indexes.models import (  # type: ignore
+        ExhaustiveKnnAlgorithmConfiguration,
+        HnswAlgorithmConfiguration,
+        SearchableField,
+        SearchField,
+        SearchFieldDataType,
+        SearchIndex,
+        SimpleField,
+        VectorSearch,
+        VectorSearchProfile,
+    )
+    from azure.search.documents.models import VectorizedQuery  # type: ignore
+    from azure.storage.blob import (  # type: ignore
+        BlobServiceClient,
+        ContentSettings,
+    )
 
 from flock.core.logging.trace_and_logged import traced_and_logged
 
@@ -74,10 +76,19 @@ def azure_search_initialize_clients(
     endpoint = endpoint or _get_default_endpoint()
     api_key = api_key or _get_default_api_key()
 
-    credential = AzureKeyCredential(api_key)
+    # Lazy import Azure dependencies
+    try:
+        from azure.core.credentials import AzureKeyCredential  # type: ignore
+        from azure.search.documents.indexes import SearchIndexClient  # type: ignore
+    except ImportError as exc:
+        raise ImportError(
+            "Optional Azure dependencies not installed. Install with 'pip install flock-mcp[azure-tools]'"
+        ) from exc
+
+    credential = AzureKeyCredential(api_key)  # type: ignore
 
     # Create the search index client
-    search_index_client = SearchIndexClient(
+    search_index_client = SearchIndexClient(  # type: ignore
         endpoint=endpoint, credential=credential
     )
 
@@ -91,7 +102,9 @@ def azure_search_initialize_clients(
         index_name = _get_default_index_name()
 
     if index_name:
-        search_client = SearchClient(
+        from azure.search.documents import SearchClient  # type: ignore
+
+        search_client = SearchClient(  # type: ignore
             endpoint=endpoint, index_name=index_name, credential=credential
         )
         clients["search_client"] = search_client
@@ -103,8 +116,8 @@ def azure_search_initialize_clients(
 @flock_tool
 def azure_search_create_index(
     index_name: str | None = None,
-    fields: list[SearchField] = None,
-    vector_search: VectorSearch | None = None,
+    fields: list | None = None,
+    vector_search: object | None = None,
     endpoint: str | None = None,
     api_key: str | None = None,
 ) -> dict[str, Any]:
@@ -132,7 +145,14 @@ def azure_search_create_index(
     index_client = clients["index_client"]
 
     # Create the index
-    index = SearchIndex(
+    try:
+        from azure.search.documents.indexes.models import SearchIndex  # type: ignore
+    except ImportError as exc:
+        raise ImportError(
+            "Optional Azure dependencies not installed. Install with 'pip install flock-mcp[azure-tools]'"
+        ) from exc
+
+    index = SearchIndex(  # type: ignore
         name=index_name, fields=fields, vector_search=vector_search
     )
 
@@ -226,7 +246,14 @@ def azure_search_query(
     # Set up vector query if vector is provided
     vectorized_query = None
     if vector and vector_field:
-        vectorized_query = VectorizedQuery(
+        try:
+            from azure.search.documents.models import VectorizedQuery  # type: ignore
+        except ImportError as exc:
+            raise ImportError(
+                "Optional Azure dependencies not installed. Install with 'pip install flock-mcp[azure-tools]'"
+            ) from exc
+
+        vectorized_query = VectorizedQuery(  # type: ignore
             vector=vector, k=vector_k, fields=[vector_field]
         )
 
@@ -432,7 +459,17 @@ def azure_search_create_vector_index(
         field_vector = field_config.get("vector", False)
 
         if field_searchable and field_type == "string":
-            field = SearchableField(
+            try:
+                from azure.search.documents.indexes.models import (  # type: ignore
+                    SearchableField,
+                    SearchFieldDataType,
+                )
+            except ImportError as exc:
+                raise ImportError(
+                    "Optional Azure dependencies not installed. Install with 'pip install flock-mcp[azure-tools]'"
+                ) from exc
+
+            field = SearchableField(  # type: ignore
                 name=field_name,
                 type=SearchFieldDataType.String,
                 key=field_key,
@@ -440,6 +477,16 @@ def azure_search_create_vector_index(
                 sortable=field_sortable,
             )
         else:
+            try:
+                from azure.search.documents.indexes.models import (  # type: ignore
+                    SearchFieldDataType,
+                    SimpleField,
+                )
+            except ImportError as exc:
+                raise ImportError(
+                    "Optional Azure dependencies not installed. Install with 'pip install flock-mcp[azure-tools]'"
+                ) from exc
+
             data_type = None
             if field_type == "string":
                 data_type = SearchFieldDataType.String
@@ -454,7 +501,7 @@ def azure_search_create_vector_index(
                     SearchFieldDataType.String
                 )
 
-            field = SimpleField(
+            field = SimpleField(  # type: ignore
                 name=field_name,
                 type=data_type,
                 key=field_key,
@@ -470,20 +517,47 @@ def azure_search_create_vector_index(
     # Set up vector search configuration
     algorithm_config = None
     if algorithm_kind.lower() == "hnsw":
-        algorithm_config = HnswAlgorithmConfiguration(
+        try:
+            from azure.search.documents.indexes.models import (  # type: ignore
+                HnswAlgorithmConfiguration,
+            )
+        except ImportError as exc:
+            raise ImportError(
+                "Optional Azure dependencies not installed. Install with 'pip install flock-mcp[azure-tools]'"
+            ) from exc
+        algorithm_config = HnswAlgorithmConfiguration(  # type: ignore
             name="hnsw-config",
             parameters={"m": 4, "efConstruction": 400, "efSearch": 500},
         )
     else:
-        algorithm_config = ExhaustiveKnnAlgorithmConfiguration(
+        try:
+            from azure.search.documents.indexes.models import (  # type: ignore
+                ExhaustiveKnnAlgorithmConfiguration,
+            )
+        except ImportError as exc:
+            raise ImportError(
+                "Optional Azure dependencies not installed. Install with 'pip install flock-mcp[azure-tools]'"
+            ) from exc
+        algorithm_config = ExhaustiveKnnAlgorithmConfiguration(  # type: ignore
             name="exhaustive-config"
         )
 
     # Create vector search configuration
-    vector_search = VectorSearch(
+    try:
+        from azure.search.documents.indexes.models import (  # type: ignore
+            VectorSearch,
+            VectorSearchProfile,
+            SearchIndex,
+        )
+    except ImportError as exc:
+        raise ImportError(
+            "Optional Azure dependencies not installed. Install with 'pip install flock-mcp[azure-tools]'"
+        ) from exc
+
+    vector_search = VectorSearch(  # type: ignore
         algorithms=[algorithm_config],
         profiles=[
-            VectorSearchProfile(
+            VectorSearchProfile(  # type: ignore
                 name="vector-profile",
                 algorithm_configuration_name=algorithm_config.name,
             )
@@ -491,7 +565,7 @@ def azure_search_create_vector_index(
     )
 
     # Create the search index
-    index = SearchIndex(
+    index = SearchIndex(  # type: ignore
         name=index_name, fields=index_fields, vector_search=vector_search
     )
 

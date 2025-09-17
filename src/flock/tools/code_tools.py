@@ -2,6 +2,7 @@ from flock.core.interpreter.python_interpreter import PythonInterpreter
 from flock.core.logging.trace_and_logged import traced_and_logged
 from flock.core.registry.decorators import flock_tool
 
+
 @traced_and_logged
 @flock_tool
 def code_evaluate_math(expression: str) -> float:

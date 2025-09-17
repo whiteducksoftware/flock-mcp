@@ -1,29 +1,43 @@
 import hashlib
+import importlib
 import json
 import re
 from collections.abc import Callable
 from typing import Any
 
-import nltk
-
 from flock.core.logging.trace_and_logged import traced_and_logged
 from flock.core.registry.decorators import flock_tool
 
-# Ensure NLTK data is downloaded
-try:
-    nltk.data.find("tokenizers/punkt")
-except LookupError:
-    nltk.download("punkt")
 
-try:
-    nltk.data.find("corpora/stopwords")
-except LookupError:
-    nltk.download("stopwords")
+def _get_nltk():
+    if importlib.util.find_spec("nltk") is None:
+        raise ImportError(
+            "Optional text tools dependency not installed. Install with 'pip install flock-mcp[all]' or 'pip install nltk'"
+        )
+    import nltk  # type: ignore
+
+    # Lazily ensure required datasets; avoid failing module import
+    try:
+        nltk.data.find("tokenizers/punkt")
+    except LookupError:
+        try:
+            nltk.download("punkt")
+        except Exception:
+            pass
+    try:
+        nltk.data.find("corpora/stopwords")
+    except LookupError:
+        try:
+            nltk.download("stopwords")
+        except Exception:
+            pass
+    return nltk
 
 
 @traced_and_logged
 @flock_tool
 def text_split_by_sentences(text: str) -> list[str]:
+    nltk = _get_nltk()
     return nltk.sent_tokenize(text)
 
 
@@ -370,10 +384,11 @@ def text_extract_keywords(text: str, top_n: int = 10) -> list[str]:
 
     # Get stopwords
     try:
-        from nltk.corpus import stopwords
+        nltk = _get_nltk()
+        from nltk.corpus import stopwords  # type: ignore
 
         stop_words = set(stopwords.words("english"))
-    except:
+    except Exception:
         # Fallback basic stopwords if NLTK data isn't available
         stop_words = {
             "i",
