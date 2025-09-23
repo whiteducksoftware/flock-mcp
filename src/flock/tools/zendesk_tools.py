@@ -180,7 +180,7 @@ def zendesk_add_comment_to_ticket(ticket_id: str, comment_body: str, public: boo
 
 @mcp.tool()
 def zendesk_set_ticket_custom_field(
-    ticket_id: str, custom_field_id: int, category_value: str
+    ticket_id: str, custom_field_id: int, custom_field_value: str
 ) -> dict:
     """Set the custom field value of a Zendesk ticket.
 
@@ -196,7 +196,7 @@ def zendesk_set_ticket_custom_field(
             "custom_fields": [
                 {
                     "id": custom_field_id,
-                    "value": category_value,
+                    "value": custom_field_value,
                 }
             ]
         }
@@ -208,6 +208,91 @@ def zendesk_set_ticket_custom_field(
         response = client.put(url, json=payload)
         response.raise_for_status()
         return response.json()["ticket"]
+
+
+@mcp.tool()
+def zendesk_set_ticket_tags(ticket_id: str, tags: list[str]) -> list[str]:
+    """Set the complete tag list for a ticket (overwrites existing tags)."""
+    ZENDESK_SUBDOMAIN = os.getenv("ZENDESK_SUBDOMAIN_TICKET")
+    BASE_URL = f"https://{ZENDESK_SUBDOMAIN}.zendesk.com"
+    url = f"{BASE_URL}/api/v2/tickets/{ticket_id}/tags.json"
+
+    payload = {"tags": tags}
+
+    import httpx
+
+    with httpx.Client(headers=_get_headers(), timeout=30.0) as client:
+        resp = client.put(url, json=payload)
+        resp.raise_for_status()
+        return resp.json().get("tags", [])
+
+
+@mcp.tool()
+def zendesk_get_ticket_field_value_type(ticket_id: str, field_id: int) -> str:
+    """Return the Python value type name of a ticket custom field.
+
+    Fetches the ticket and inspects ticket.custom_fields for the given field id.
+    """
+    ZENDESK_SUBDOMAIN = os.getenv("ZENDESK_SUBDOMAIN_TICKET")
+    BASE_URL = f"https://{ZENDESK_SUBDOMAIN}.zendesk.com"
+    url = f"{BASE_URL}/api/v2/tickets/{ticket_id}.json"
+
+    import httpx
+
+    with httpx.Client(headers=_get_headers(), timeout=30.0) as client:
+        resp = client.get(url)
+        resp.raise_for_status()
+        ticket = resp.json().get("ticket", {})
+        custom_fields = ticket.get("custom_fields", [])
+        for field in custom_fields:
+            if field.get("id") == field_id:
+                return type(field.get("value")).__name__
+
+    raise ValueError(f"Field ID {field_id} not found in ticket {ticket_id}.")
+
+
+@mcp.tool()
+def zendesk_get_ticket_field_type(field_id: int) -> dict:
+    """Return the Zendesk custom field type and options for a field id.
+
+    Uses GET /api/v2/ticket_fields/{field_id}.json.
+
+    Returns a dict containing at least:
+    { "type": str, "custom_field_options": list }
+    """
+    ZENDESK_SUBDOMAIN = os.getenv("ZENDESK_SUBDOMAIN_TICKET")
+    BASE_URL = f"https://{ZENDESK_SUBDOMAIN}.zendesk.com"
+    url = f"{BASE_URL}/api/v2/ticket_fields/{field_id}.json"
+
+    import httpx
+
+    with httpx.Client(headers=_get_headers(), timeout=30.0) as client:
+        resp = client.get(url)
+        resp.raise_for_status()
+        field = resp.json().get("ticket_field", {})
+        return {
+            "id": field.get("id"),
+            "type": field.get("type"),
+            "title": field.get("title"),
+            "required": field.get("required"),
+            "custom_field_options": field.get("custom_field_options", []),
+        }
+
+@mcp.tool()
+def zendesk_add_ticket_tags(ticket_id: str, tags: list[str]) -> list[str]:
+    """Add tags to a ticket (preserves existing tags)."""
+    ZENDESK_SUBDOMAIN = os.getenv("ZENDESK_SUBDOMAIN_TICKET")
+    BASE_URL = f"https://{ZENDESK_SUBDOMAIN}.zendesk.com"
+    url = f"{BASE_URL}/api/v2/tickets/{ticket_id}/tags.json"
+
+    payload = {"tags": tags}
+
+    import httpx
+
+    with httpx.Client(headers=_get_headers(), timeout=30.0) as client:
+        resp = client.post(url, json=payload)
+        resp.raise_for_status()
+        return resp.json().get("tags", [])
 
 if __name__ == "__main__":
     transport = os.getenv("ZENDESK_MCP_TRANSPORT", "stdio")
